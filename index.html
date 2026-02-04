@@ -75,6 +75,7 @@
         border: 4px solid var(--pink);
         margin: 20px auto;
     }
+
     .cell { width: 22px; height: 22px; background: white; }
     .wall { background: var(--pink); border-radius: 2px; }
     .end { background: #ffb3c1; display: flex; align-items: center; justify-content: center; font-size: 14px; }
@@ -144,6 +145,12 @@
     <div id="maze-container" class="container">
         <h3>Finish the maze to get the message!</h3>
         <div id="maze-grid"></div>
+        <div id="mobile-controls" style="margin-top: 20px;">
+    <button class="control-btn" onclick="move('ArrowUp')">UP</button><br>
+    <button class="control-btn" onclick="move('ArrowLeft')">LEFT</button>
+    <button class="control-btn" onclick="move('ArrowDown')">DOWN</button>
+    <button class="control-btn" onclick="move('ArrowRight')">RIGHT</button>
+</div>
     </div>
 
     <div id="envelope-wrapper" class="container">
