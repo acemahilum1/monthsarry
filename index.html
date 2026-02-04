@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthsary Message</title>
+
+    <style>
+        :root {
+            --pink: #ff4d6d;
+            --light-pink: #ffccd5;
+            --dark-pink: #c9184a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fff0f3;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center for Login/Maze */
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Locked at start */
+            transition: all 0.5s ease;
+        }
+
+        /* This class is added by Javascript at the end to fix scrolling */
+        body.allow-scroll {
+            overflow-y: auto !important;
+            align-items: flex-start !important;
+            padding: 40px 10px;
+            height: auto !important;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid var(--pink);
+            border-radius: 10px;
+            margin: 10px;
+            width: 220px;
+            text-align: center;
+        }
+
+        button {
+            background: var(--pink);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover { background: var(--dark-pink); transform: scale(1.05); }
+
+        #maze-container { display: none; }
+    #maze-grid {
+        display: grid;
+        grid-template-columns: repeat(15, 22px);
+        grid-template-rows: repeat(15, 22px);
+        gap: 1px;
+        background: #ffe5ec;
+        border: 4px solid var(--pink);
+        margin: 20px auto;
+    }
+    .cell { width: 22px; height: 22px; background: white; }
+    .wall { background: var(--pink); border-radius: 2px; }
+    .end { background: #ffb3c1; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .player { background: #ff0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 0 10px red; }
+        /* Envelope */
+        #envelope-wrapper { display: none; perspective: 1000px; }
+        .envelope {
+            width: 200px; height: 130px;
+            background: var(--pink);
+            margin: 40px auto;
+            position: relative;
+            transition: transform 1s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .envelope-lid {
+            position: absolute;
+            top: 0; left: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-top: 80px solid var(--dark-pink);
+            transform-origin: top;
+            transition: transform 0.8s ease-in-out;
+            z-index: 3;
+        }
+        .open .envelope-lid { transform: rotateX(180deg); z-index: 1; }
+
+        /* Photo Reveal */
+        #final-message { display: none; text-align: left; }
+        .photo-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .photo-gallery img {
+            width: 140px; height: 140px;
+            border: 5px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: 1s all ease-out;
+        }
+        .photo-gallery img.show { opacity: 1; transform: scale(1) rotate(var(--r)); }
+
+        #special-music-btn { display: none; margin: 20px auto; background: #1db954; }
+    </style>
+</head>
+<body>
+
+    <audio id="initial-music" loop>
+        <source src="Cinnamoroll_Anime_Shorts_Theme_Song_Full_Version_English_Subtitles_128KBPS.mp4" type="audio/mpeg">
+    </audio>
+    <audio id="saksi-ang-langit">
+        <source src="saksi-ang-langit.mp3 (1).mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="login-screen" class="container">
+        <h2>💖 Remember our 1st Day?</h2>
+        <p>Monthsary (MM/DD/YY)</p>
+        <input type="text" id="ans" placeholder="hmmm....">
+        <br>
+        <button onclick="checkAnswer()">Unlock the message</button>
+    </div>
+
+    <div id="maze-container" class="container">
+        <h3>Finish the maze to get the message!</h3>
+        <div id="maze-grid"></div>
+    </div>
+
+    <div id="envelope-wrapper" class="container">
+        <div id="envelope-box" class="envelope">
+            <div class="envelope-lid"></div>
+            <div style="position:absolute; bottom:10px; left:42%; font-size:25px;">✉️</div>
+        </div>
+
+        <button id="special-music-btn" onclick="playSpecialSong()">Open the message</button>
+        
+        <div id="final-message">
+            <div class="photo-gallery" id="gallery">
+                <img src="1.jpg.jpg" alt="Us">
+                <img src="2.jpg.jpg" alt="Us">
+                <img src="3.jpg.jpg" alt="Us">
+                <img src="4.jpg.jpg" alt="Us">
+                <img src="5.jpg.jpg" alt="Us">
+                <img src="6.jpg.jpg" alt="Us">
+                <img src="7.jpg.jpg" alt="Us">
+                <img src="8.jpg.jpg" alt="Us">
+                <img src="9.jpg.jpg" alt="Us">
+                <img src="10.jpg.jpg" alt="Us">
+                
+            </div>
+            
+            <h2 style="color: var(--dark-pink); text-align: center; margin-bottom: 15px;">Happy 6th Monthsary! 🌹</h2>
+            
+            <div style="max-width: 550px; margin: 0 auto; line-height: 1.8; color: #333;">
+                <p>Happy 6th Monthsary to us Bebii! Im very happy that it’s already been half a year since naging tayo. Every day since then, you’ve given me a reason to smile and a sense of peace I never knew I was looking for. Thank you for being my girl, my best friend, and my greatest adventure. Thank you for all the love and efforts na binibigay mo sakin, sa mga araw na magkasama lang tayo buong araw kahit na walang ginagawa basta ikaw kasama ko nakukumpleto na yung araw ko. Saksi ang langit sa bawat hiling ko na sana ikaw na ang huli. Saksi ang bawat bituin sa mga plano at pangarap na binubuo ko, kung san ikaw ang sentro. Maikli man sa iba yung 6 months, para sakin parang taon na sa halos araw araw na magkasama tayo sa dami ng masasayang ginagawa natin sa kada araw na magkasama tayo.hinding hindi ako magsasawa na mahalin at intindihin ka, wag ka sanang magsasawa na mahalin ako. i love you more than my self, more than anything, more than everything iloveyou very much bebii🩷🩷🩷.              </p> 
+                
+                <p style="font-weight: bold; text-align: center; color: var(--dark-pink); font-size: 1.1rem; margin-top: 20px;">
+                    Six months down, a lifetime to go. I love you more than words can ever express!<br><br>
+                    ILOVEYOU SO MUCH BEBI !!! 🥰🥰😘😘🩷🩷🩷 
+                    </p>
+                <p style="font-weight: bold; text-align: center; color: var(--dark-pink); font-size: 1.1rem; margin-top: 20px;">    
+                    Happy 6th Monthsary to us!!!<br><br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        const initialMusic = document.getElementById('initial-music');
+        const specialMusic = document.getElementById('saksi-ang-langit');
+        
+        const mazeLayout = [
+            [2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0],
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+            [1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],
+            [0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]
+        ];
+
+        let playerPos = { x: 0, y: 0 };
+
+        function checkAnswer() {
+            const val = document.getElementById('ans').value.toLowerCase().trim();
+            // Accepts August 20 2025, with commas, or 08/20/25
+            if(val === "august 20 2025" || val === "august 20, 2025" || val === "08/20/25" || val === "082025") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('maze-container').style.display = 'block';
+                initialMusic.play();
+                drawMaze();
+            } else {
+                alert("Mali bebi! Try again. ❤️");
+            }
+        }
+
+        function drawMaze() {
+    const grid = document.getElementById('maze-grid');
+    grid.innerHTML = '';
+    for (let y = 0; y < 15; y++) {
+        for (let x = 0; x < 15; x++) {
+            const div = document.createElement('div');
+            div.classList.add('cell');
+            if (mazeLayout[y][x] === 1) div.classList.add('wall');
+            if (mazeLayout[y][x] === 3) { 
+                div.classList.add('end'); 
+                div.innerHTML = '💌'; // A blue heart for the finish
+            }
+            if (x === playerPos.x && y === playerPos.y) { 
+                div.classList.add('player'); 
+                div.innerHTML = '🩷 '; // Represents Cinnamoroll
+            }
+            grid.appendChild(div);
+        }
+    }
+}
+
+        window.addEventListener('keydown', (e) => {
+            if (document.getElementById('maze-container').style.display === 'none') return;
+            let newX = playerPos.x, newY = playerPos.y;
+            if (e.key === 'ArrowUp') newY--;
+            if (e.key === 'ArrowDown') newY++;
+            if (e.key === 'ArrowLeft') newX--;
+            if (e.key === 'ArrowRight') newX++;
+            if (newX >= 0 && newX < 15 && newY >= 0 && newY < 15 && mazeLayout[newY][newX] !== 1) {
+                playerPos.x = newX; playerPos.y = newY;
+                drawMaze();
+                if (mazeLayout[newY][newX] === 3) setTimeout(revealEnvelope, 400);
+            }
+        });
+
+        function revealEnvelope() {
+            initialMusic.pause();
+            document.getElementById('maze-container').style.display = 'none';
+            document.getElementById('envelope-wrapper').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('envelope-box').classList.add('open');
+                setTimeout(() => {
+                    document.getElementById('special-music-btn').style.display = 'block';
+                }, 1000);
+            }, 1000);
+        }
+
+        function playSpecialSong() {
+            document.getElementById('special-music-btn').style.display = 'none';
+            specialMusic.play();
+            
+            // UNLOCK SCROLLING
+            document.body.classList.add('allow-scroll');
+            
+            document.getElementById('final-message').style.display = 'block';
+            
+            // Trigger Confetti
+            var end = Date.now() + (4 * 1000);
+            (function frame() {
+                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4d6d', '#ffccd5'], shapes: ['heart'] });
+                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4d6d', '#ffccd5'], shapes: ['heart'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+
+            const imgs = document.querySelectorAll('.photo-gallery img');
+            imgs.forEach((img, i) => {
+                setTimeout(() => {
+                    const rot = (Math.random() * 14 - 7) + "deg";
+                    img.style.setProperty('--r', rot);
+                    img.classList.add('show');
+                }, i * 1000);
+            });
+        }
+    </script>
+</body>
+</html>
