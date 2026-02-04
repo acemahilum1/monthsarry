@@ -14,25 +14,33 @@ function playSpecialSong() {
         }, i * 1000);
     });
 }
-// Function for both Button clicks and Key presses
+// This function moves the heart
 function move(direction) {
+    // Check if the maze is actually visible
     if (document.getElementById('maze-container').style.display === 'none') return;
     
     let newX = playerPos.x;
     let newY = playerPos.y;
 
     if (direction === 'ArrowUp') newY--;
-    if (direction === 'ArrowDown') newY++;
-    if (direction === 'ArrowLeft') newX--;
-    if (direction === 'ArrowRight') newX++;
+    else if (direction === 'ArrowDown') newY++;
+    else if (direction === 'ArrowLeft') newX--;
+    else if (direction === 'ArrowRight') newX++;
 
+    // Check for walls and boundaries
     if (newX >= 0 && newX < 15 && newY >= 0 && newY < 15 && mazeLayout[newY][newX] !== 1) {
         playerPos.x = newX;
         playerPos.y = newY;
-        drawMaze();
-        if (mazeLayout[newY][newX] === 3) setTimeout(revealEnvelope, 400);
+        drawMaze(); // Redraw the heart in the new spot
+        
+        // Check if Bebii reached the end
+        if (mazeLayout[newY][newX] === 3) {
+            setTimeout(revealEnvelope, 400);
+        }
     }
 }
 
-// Keep the keyboard support too
-window.addEventListener('keydown', (e) => move(e.key));
+// This handles the keyboard for computer users
+window.addEventListener('keydown', (e) => {
+    move(e.key);
+});
